@@ -23,8 +23,35 @@ public class SortTestCase {
         // insertSort(arr);
         // shellSort(arr);
         // mergeSort(arr, 0, arr.length - 1);
-        quicksort(arr1, 0, arr1.length - 1);
-        print(arr1);
+        // quicksort(arr1, 0, arr1.length - 1);
+        int[] ints = countSorted(arr1);
+        print(ints);
+    }
+
+    /**
+     * 计数排序
+     * 适用于数量大范围小的数据集比如 某公司员工按年龄排序  年龄范围小 员工数量多
+     * 思路：
+     * 使用计数数组记录每个数值出现的次数，使用一个新数组放排好的结果
+     * @author zhanghualei
+     * @date 2021/2/18 11:24
+     * @param
+     */
+    public static int[] countSorted(int[] arr) {
+        //计数器长度是数组最大数字加1
+        int[] counter = new int[10001];
+        int[] result = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            counter[arr[i]]++;
+        }
+        int j = 0;
+        for (int i = 0; i < counter.length; i++) {
+            //i 为数组中的元素值
+            while (counter[i]-- > 0) {
+                result[j++] = i;
+            }
+        }
+        return result;
     }
 
     public static void quicksort(int[] arr, int left, int right) {
@@ -85,8 +112,6 @@ public class SortTestCase {
         }
         quicksort1(arr, left, i - 1);
         quicksort1(arr, i + 1, right);
-
-
     }
 
     public static void mergeSort(int[] arr, int left, int right) {
@@ -233,10 +258,11 @@ public class SortTestCase {
         }
     }
 
-    private static void print(int[] arr) {
+    public static void print(int[] arr) {
         for (int k = 0; k < arr.length; k++) {
             System.out.print(arr[k] + " ");
         }
+        System.out.println();
     }
 
     private static void swap(int[] arr, int i, int j) {

@@ -1,5 +1,7 @@
 package com.zhl.leetcode.algorithm;
 
+import java.util.Arrays;
+
 /**
  * @author Zhanghualei
  * @Classname Main
@@ -17,6 +19,7 @@ public class SortTestCase {
     public static void main(String[] args) {
         // int[] arr = {1, 3, 2, 6, 9, 7, 8, 4, 5, 0, 8, 8, 9, 1, 2, 3, 4, 5};
         int[] arr1 = {1, 3, 4, 6, 8, 2, 6, 5, 7, 10, 6};
+        // int[] arr1 = {111, 221, 123, 130, 145, 520, 10, 10, 1};
 
         // selectSort(arr);
         // bubbleSort(arr1);
@@ -24,7 +27,7 @@ public class SortTestCase {
         // shellSort(arr);
         // mergeSort(arr, 0, arr.length - 1);
         // quicksort(arr1, 0, arr1.length - 1);
-        int[] ints = countSorted(arr1);
+        int[] ints = radixSort(arr1);
         print(ints);
     }
 
@@ -33,9 +36,10 @@ public class SortTestCase {
      * 适用于数量大范围小的数据集比如 某公司员工按年龄排序  年龄范围小 员工数量多
      * 思路：
      * 使用计数数组记录每个数值出现的次数，使用一个新数组放排好的结果
+     *
+     * @param
      * @author zhanghualei
      * @date 2021/2/18 11:24
-     * @param
      */
     public static int[] countSorted(int[] arr) {
         //计数器长度是数组最大数字加1
@@ -44,12 +48,54 @@ public class SortTestCase {
         for (int i = 0; i < arr.length; i++) {
             counter[arr[i]]++;
         }
-        int j = 0;
-        for (int i = 0; i < counter.length; i++) {
-            //i 为数组中的元素值
-            while (counter[i]-- > 0) {
-                result[j++] = i;
+        //累加数组 确定数字的下标
+        //0 1 2 2 2 3 3  原待排数组
+        //1 1 3 2  计数数组
+        //1 2 5 7  累加数组
+        for (int k = 1; k < counter.length; k++) {
+            counter[k] = counter[k] + counter[k - 1];
+        }
+        for (int m = arr.length - 1; m >= 0; m--) {
+            result[--counter[arr[m]]] = arr[m];
+        }
+        return result;
+    }
+
+    /**
+     * 基数排序：
+     * 思路：对数字个位 十位 百位...分别进行计数排序，将每轮排序的结果覆盖到原数组上
+     *
+     * @param
+     * @author zhanghualei
+     * @date 2021/2/18 15:53
+     */
+    public static int[] radixSort(int[] arr) {
+        int[] result = new int[arr.length];
+        //假设三位数字  此处3可以使用函数计算得到最大数字的位数
+        for (int i1 = 0; i1 < 3; i1++) {
+
+            int[] counter = new int[10];
+            //计数排序逻辑
+            for (int i = 0; i < arr.length; i++) {
+                //对某位的数字进行取模运算
+                int v = (int)(arr[i] / Math.pow(10, i1) % 10);
+                counter[v]++;
             }
+            //累加数组 从1开始 i=i位置的值加i-1位置的值
+            for (int n = 1; n < counter.length; n++) {
+                counter[n] = counter[n] + counter[n - 1];
+            }
+
+            //从后往前过一边数组
+            for (int m = arr.length - 1; m >= 0; m--) {
+                int v = (int)(arr[m] / Math.pow(10, i1) % 10);
+                result[--counter[v]] = arr[m];
+            }
+            System.out.println(Arrays.toString(result) + "i1=" + i1);
+            //计数排序逻辑
+            //完成后 result 复制回arr
+            System.arraycopy(result, 0, arr, 0, arr.length);
+
         }
         return result;
     }
